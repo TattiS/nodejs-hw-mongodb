@@ -1,3 +1,4 @@
+import createError from 'http-errors';
 import {
   getAllContactsService,
   getContactByIdService,
@@ -5,12 +6,11 @@ import {
   deleteContactService,
   updateContactService,
 } from '../services/contacts.js';
-import { createHttpError } from 'http-errors';
 
 export const getContacts = async (req, res, next) => {
   const contacts = await getAllContactsService();
   if (!contacts || contacts.length === 0) {
-    return next(createHttpError(404, 'No contacts found'));
+    return next(createError(404, 'No contacts found'));
   }
   return res.status(200).json({
     status: 200,
@@ -23,7 +23,7 @@ export const getContact = async (req, res, next) => {
   const { id } = req.params;
   const contact = await getContactByIdService(id);
   if (!contact) {
-    return next(createHttpError(404, 'Contact not found'));
+    return next(createError(404, `Contact with id ${id} not found`));
   }
   return res.status(200).json({
     status: 200,
@@ -36,7 +36,7 @@ export const createContact = async (req, res, next) => {
   const { name, phoneNumber, email, isFavourite, contactType } = req.body;
   if (!name || !phoneNumber || !contactType) {
     return next(
-      createHttpError(
+      createError(
         400,
         'Missing required fields! Please check: name, phoneNumber, and contactType',
       ),
@@ -49,7 +49,9 @@ export const createContact = async (req, res, next) => {
     isFavourite,
     contactType,
   });
-
+  if (!newContact) {
+    return next(createError(404, 'Contact not created'));
+  }
   return res.status(201).json({
     status: 201,
     message: 'Successfully created a contact!',
@@ -61,14 +63,14 @@ export const deleteContact = async (req, res, next) => {
   const { id } = req.params;
   const contact = await deleteContactService(id);
   if (!contact) {
-    return next(createHttpError(404, 'Contact not found'));
+    return next(createError(404, `Contact with id=${id} not found`));
   }
   return res.status(204).send();
 };
 
 export const updateContact = async (req, res, next) => {
   if (!req.body || Object.keys(req.body).length === 0) {
-    return next(createHttpError(400, 'Request body is empty!'));
+    return next(createError(400, 'Request body is empty!'));
   }
   const { id } = req.params;
   const { name, phoneNumber, email, isFavourite, contactType } = req.body;
@@ -82,7 +84,7 @@ export const updateContact = async (req, res, next) => {
   });
 
   if (!updatedContact) {
-    return next(createHttpError(404, 'Contact not found'));
+    return next(createError(404, `Contact with id ${id} not found`));
   }
 
   return res.status(200).json({
