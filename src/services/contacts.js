@@ -1,25 +1,28 @@
 import { ContactsCollection } from '../db/models/contact.js';
 
-export const getAllContacts = async () => {
-  try {
-    const contacts = await ContactsCollection.find();
-    return contacts;
-  } catch (error) {
-    console.error("Can't get all contacts");
-    throw new Error('Error with get all contacts service' + error.message);
-  }
+export const getAllContactsService = async () => {
+  const contacts = await ContactsCollection.find();
+  return contacts;
 };
 
-export const getContactById = async (id) => {
-  try {
-    const contact = await ContactsCollection.findById(id);
-    if (!contact) {
-      console.error(`Can't find contact by such id ${id}`);
-      throw new Error("Can't find contact by id");
-    }
-    return contact;
-  } catch (error) {
-    console.error(`Can't get contact by id ${id}`);
-    throw new Error('Error with get contact by id service ' + error.message);
-  }
+export const getContactByIdService = async (id) => {
+  const contact = await ContactsCollection.findById(id);
+  return contact;
+};
+
+export const createContactService = async (contactInfo) => {
+  const newContact = await ContactsCollection.create(contactInfo);
+  return newContact;
+};
+export const deleteContactService = async (id) => {
+  const deletedContact = await ContactsCollection.findByIdAndDelete(id);
+  return deletedContact;
+};
+export const updateContactService = async (id, contactInfo) => {
+  const updatedContact = await ContactsCollection.findByIdAndUpdate(
+    id,
+    contactInfo,
+    { new: true },
+  );
+  return updatedContact;
 };

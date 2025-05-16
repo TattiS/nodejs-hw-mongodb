@@ -2,8 +2,9 @@ import express from 'express';
 import pino from 'pino-http';
 import cors from 'cors';
 import { getEnvValue } from './utils/getEnvValue.js';
-//import { getContacts, getContactById } from './controllers/contacts.js';
 import { router } from './routes/contacts.js';
+import { notFoundHandler } from './middlewares/notFoundHandler.js';
+import { errorHandler } from './middlewares/errorHandler.js';
 
 const PORT = parseInt(getEnvValue('PORT', 3000));
 
@@ -24,16 +25,8 @@ export const startServer = () => {
     res.json('Hello from the server!');
   });
 
-  app.use((req, res, next) => {
-    res.status(404).json({ message: 'Not Found' });
-    next();
-  });
-  app.use((err, req, res, next) => {
-    res.status(500).json({
-      message: 'Something went wrong',
-      error: err.message,
-    });
-  });
+  app.use(notFoundHandler);
+  app.use(errorHandler);
   app.listen(PORT, () => {
     console.info(`Server is running on port ${PORT}`);
   });
