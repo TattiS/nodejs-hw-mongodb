@@ -1,5 +1,4 @@
-import pkg from 'http-errors';
-const { isHttpError } = pkg;
+import isHttpError from 'http-errors';
 
 export const errorHandler = (err, req, res, next) => {
   if (isHttpError(err)) {
