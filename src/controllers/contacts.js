@@ -6,9 +6,20 @@ import {
   deleteContactService,
   updateContactService,
 } from '../services/contacts.js';
-
+import { parsePaginationParams } from '../utils/parsePaginationParams.js';
+import { parseSortParams } from '../utils/parseSortParams.js';
+import { parseFilterParams } from '../utils/parseFilterParams.js';
 export const getContacts = async (req, res, next) => {
-  const contacts = await getAllContactsService();
+  const { page, perPage } = parsePaginationParams(req.query);
+  const { sort, sortBy } = parseSortParams(req.query);
+  const filter = parseFilterParams(req.query);
+  const contacts = await getAllContactsService({
+    page,
+    perPage,
+    sort,
+    sortBy,
+    filter,
+  });
   if (!contacts || contacts.length === 0) {
     return next(createError(404, 'No contacts found'));
   }
