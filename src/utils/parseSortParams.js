@@ -25,11 +25,11 @@ const parseSortBy = (sortBy) => {
 };
 
 export const parseSortParams = (query) => {
-  const { sort, sortBy } = query;
-  const parsedSortOrder = parseSortOrder(sort);
+  const { sortOrder, sortBy } = query;
+  const parsedSortOrder = parseSortOrder(sortOrder);
   const parsedSortOrderBy = parseSortBy(sortBy);
   return {
-    sort: parsedSortOrder,
+    sortOrder: parsedSortOrder,
     sortBy: parsedSortOrderBy,
   };
 };
