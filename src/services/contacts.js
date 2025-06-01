@@ -7,21 +7,23 @@ export const getAllContactsService = async ({
   sortOrder,
   sortBy,
   filter,
+  userId,
 }) => {
   try {
     const skip = (page - 1) * perPage;
     const limit = perPage;
-    const contactsQuery = ContactsCollection.find();
+    // const contactsQuery = ContactsCollection.find({ userId });
+    const query = { userId };
     if (filter.contactType) {
-      contactsQuery.where('contactType').equals(filter.contactType);
+      query.contactType = filter.contactType;
     }
     if (filter.isFavourite !== undefined) {
-      contactsQuery.where('isFavourite').equals(filter.isFavourite);
+      query.isFavourite = filter.isFavourite;
     }
 
     const [contactsCount, contacts] = await Promise.all([
-      ContactsCollection.find().merge(contactsQuery).countDocuments(),
-      contactsQuery
+      ContactsCollection.countDocuments(query),
+      ContactsCollection.find(query)
         .skip(skip)
         .limit(limit)
         .sort({ [sortBy]: sortOrder })
@@ -41,9 +43,9 @@ export const getAllContactsService = async ({
   }
 };
 
-export const getContactByIdService = async (id) => {
+export const getContactByIdService = async (id, userId) => {
   try {
-    const contact = await ContactsCollection.findById(id);
+    const contact = await ContactsCollection.findOne({ _id: id, userId });
     return contact;
   } catch (error) {
     throw new Error(`Failed to fetch contact with id ${id} - ${error.message}`);
@@ -58,6 +60,7 @@ export const createContactService = async (contactInfo) => {
     throw new Error(`Failed to create a new contact - ${error.message}`);
   }
 };
+
 export const deleteContactService = async (id) => {
   try {
     const deletedContact = await ContactsCollection.findByIdAndDelete(id);

@@ -9,16 +9,20 @@ import {
 import { parsePaginationParams } from '../utils/parsePaginationParams.js';
 import { parseSortParams } from '../utils/parseSortParams.js';
 import { parseFilterParams } from '../utils/parseFilterParams.js';
+import createHttpError from 'http-errors';
+
 export const getContacts = async (req, res, next) => {
   const { page, perPage } = parsePaginationParams(req.query);
   const { sortOrder, sortBy } = parseSortParams(req.query);
   const filter = parseFilterParams(req.query);
+  const { _id: userId } = req.user;
   const contacts = await getAllContactsService({
     page,
     perPage,
     sortOrder,
     sortBy,
     filter,
+    userId,
   });
   if (!contacts || contacts.length === 0) {
     return next(createError(404, 'No contacts found'));
@@ -32,7 +36,8 @@ export const getContacts = async (req, res, next) => {
 
 export const getContact = async (req, res, next) => {
   const { id } = req.params;
-  const contact = await getContactByIdService(id);
+  const { _id: userId } = req.user;
+  const contact = await getContactByIdService(id, userId);
   if (!contact) {
     return next(createError(404, `Contact with id ${id} not found`));
   }
@@ -45,6 +50,10 @@ export const getContact = async (req, res, next) => {
 
 export const createContact = async (req, res, next) => {
   const { name, phoneNumber, email, isFavourite, contactType } = req.body;
+  const { _id: userId } = req.user;
+  if (!userId) {
+    return next(new createHttpError(401, 'User not authenticated'));
+  }
   if (!name || !phoneNumber || !contactType) {
     return next(
       createError(
@@ -59,6 +68,7 @@ export const createContact = async (req, res, next) => {
     email,
     isFavourite,
     contactType,
+    userId,
   });
   if (!newContact) {
     return next(createError(404, 'Contact not created'));
