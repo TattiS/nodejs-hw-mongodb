@@ -4,26 +4,31 @@ const contactSchema = new Schema(
   {
     name: {
       type: String,
-      require: true,
+      required: true,
     },
     phoneNumber: {
       type: String,
-      require: true,
+      required: true,
     },
     email: {
       type: String,
-      require: false,
+      required: false,
     },
     isFavourite: {
       type: Boolean,
-      require: false,
+      required: false,
       default: false,
     },
     contactType: {
       type: String,
       enum: ['work', 'home', 'personal'],
-      require: true,
+      required: true,
       default: 'personal',
+    },
+    userId: {
+      type: Schema.Types.ObjectId,
+      ref: 'users',
+      required: true,
     },
   },
   {
