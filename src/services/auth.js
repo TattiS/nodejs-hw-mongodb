@@ -5,7 +5,7 @@ import SessionCollection from '../db/models/session.js';
 import {
   generateAccessToken,
   generateRefreshToken,
-} from '../utils/generateToken.js';
+} from '../utils/generateAccessToken.js';
 import { FIFTEEN_MINUTES, THIRTY_DAYS } from '../constants/index.js';
 
 const createSession = () => {
@@ -19,14 +19,14 @@ const createSession = () => {
   };
 };
 
-export const registerUser = async (userInfo) => {
-  const isUserExists = await UserCollection.findOne({ email: userInfo.email });
+export const registerUser = async (payload) => {
+  const isUserExists = await UserCollection.findOne({ email: payload.email });
   if (isUserExists) {
-    throw createHttpError(409, 'Email in use');
+    throw new createHttpError.Conflict('Email is already in use');
   }
 
-  const hashedPassword = bcrypt.hash(userInfo.password);
-  return await UserCollection.create({ ...userInfo, password: hashedPassword });
+  const hashedPassword = await bcrypt.hash(payload.password, 10);
+  return UserCollection.create({ ...payload, password: hashedPassword });
 };
 
 export const loginUser = async (payload) => {

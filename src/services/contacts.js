@@ -12,7 +12,7 @@ export const getAllContactsService = async ({
   try {
     const skip = (page - 1) * perPage;
     const limit = perPage;
-    // const contactsQuery = ContactsCollection.find({ userId });
+
     const query = { userId };
     if (filter.contactType) {
       query.contactType = filter.contactType;
