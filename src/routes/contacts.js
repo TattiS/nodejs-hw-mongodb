@@ -15,7 +15,7 @@ import {
 import { isValidId } from '../middlewares/isValidId.js';
 import { authenticate } from '../middlewares/authenticate.js';
 
-export const router = Router();
+const router = Router();
 router.use(authenticate);
 
 router.get('/', ctrlWrapper(getContacts));
@@ -38,3 +38,5 @@ router.put(
   validateBody(updateContactValidationSchema),
   ctrlWrapper(updateContact),
 );
+
+export default router;

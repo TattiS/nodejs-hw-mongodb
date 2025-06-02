@@ -1,7 +1,7 @@
 import createHttpError from 'http-errors';
-import bcrypt from 'bcryptjs';
-import { UserCollection } from '../models/user.js';
-import { SessionsCollection } from '../models/session.js';
+import bcrypt from 'bcrypt';
+import UserCollection from '../db/models/user.js';
+import SessionCollection from '../db/models/session.js';
 import {
   generateAccessToken,
   generateRefreshToken,
@@ -25,7 +25,7 @@ export const registerUser = async (userInfo) => {
     throw createHttpError(409, 'Email in use');
   }
 
-  const hashedPassword = await bcrypt.hash(userInfo.password);
+  const hashedPassword = bcrypt.hash(userInfo.password);
   return await UserCollection.create({ ...userInfo, password: hashedPassword });
 };
 
@@ -39,24 +39,18 @@ export const loginUser = async (payload) => {
     throw createHttpError(401, 'Invalid login or password');
   }
 
-  await SessionsCollection.deleteOne({ userId: user._id });
+  await SessionCollection.deleteOne({ userId: user._id });
 
-  // const accessToken = generateAccessToken();
-  // const refreshToken = generateRefreshToken();
   const createdSession = createSession();
 
-  return await SessionsCollection.create({
+  return await SessionCollection.create({
     userId: user._id,
     ...createdSession,
-    // accessToken,
-    // refreshToken,
-    // accessTokenValidUntil: new Date(Date.now() + FIFTEEN_MINUTES),
-    // refreshTokenValidUntil: new Date(Date.now() + THIRTY_DAYS),
   });
 };
 
 export const refreshUserSession = async ({ sessionId, refreshToken }) => {
-  const currentSession = await SessionsCollection.findOne({
+  const currentSession = await SessionCollection.findOne({
     _id: sessionId,
     refreshToken,
   });
@@ -72,15 +66,15 @@ export const refreshUserSession = async ({ sessionId, refreshToken }) => {
     throw createHttpError(401, 'Session token is expired');
   }
 
-  await SessionsCollection.deleteOne({ _id: sessionId, refreshToken });
+  await SessionCollection.deleteOne({ _id: sessionId, refreshToken });
   const newSession = createSession();
 
-  return await SessionsCollection.create({
+  return await SessionCollection.create({
     userId: currentSession.userId,
     ...newSession,
   });
 };
 
 export const logoutUser = async (sessionId) => {
-  await SessionsCollection.deleteOne({ _id: sessionId });
+  await SessionCollection.deleteOne({ _id: sessionId });
 };

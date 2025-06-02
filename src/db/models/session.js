@@ -13,5 +13,5 @@ const sessionSchema = new Schema(
     versionKey: false,
   },
 );
-
-export const SessionCollection = model('sessions', sessionSchema);
+const SessionCollection = model('sessions', sessionSchema);
+export default SessionCollection;

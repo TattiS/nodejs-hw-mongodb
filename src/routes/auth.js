@@ -1,12 +1,11 @@
 import { Router } from 'express';
-import { ctrlWrapper } from '../middlewares/ctrlWrapper.js';
-import { registerUserSchema } from '../schemas/userSchemas.js';
+import { ctrlWrapper } from '../utils/ctrlWrapper.js';
 import {
   registerUserController,
   logoutUserController,
   refreshUserSessionController,
 } from '../controllers/authController.js';
-import { loginUserSchema } from '../validation/auth.js';
+import { registerUserSchema, loginUserSchema } from '../validation/auth.js';
 import { loginUserController } from '../controllers/authController.js';
 import { validateBody } from '../middlewares/validateBody.js';
 import { authenticate } from '../middlewares/authenticate.js';
