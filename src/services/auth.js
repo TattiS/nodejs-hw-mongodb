@@ -42,7 +42,7 @@ export const loginUser = async (payload) => {
   await SessionCollection.deleteOne({ userId: user._id });
 
   const createdSession = createSession();
-
+  console.log(createdSession);
   return await SessionCollection.create({
     userId: user._id,
     ...createdSession,

@@ -61,9 +61,12 @@ export const createContactService = async (contactInfo) => {
   }
 };
 
-export const deleteContactService = async (id) => {
+export const deleteContactService = async (id, userId) => {
   try {
-    const deletedContact = await ContactsCollection.findByIdAndDelete(id);
+    const deletedContact = await ContactsCollection.findOneAndDelete({
+      _id: id,
+      userId,
+    });
     return deletedContact;
   } catch (error) {
     throw new Error(
@@ -71,10 +74,10 @@ export const deleteContactService = async (id) => {
     );
   }
 };
-export const updateContactService = async (id, contactInfo) => {
+export const updateContactService = async (id, userId, contactInfo) => {
   try {
-    const updatedContact = await ContactsCollection.findByIdAndUpdate(
-      id,
+    const updatedContact = await ContactsCollection.findOneAndUpdate(
+      { _id: id, userId },
       contactInfo,
       { new: true },
     );

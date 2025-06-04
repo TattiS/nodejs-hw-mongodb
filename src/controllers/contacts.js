@@ -16,6 +16,9 @@ export const getContacts = async (req, res, next) => {
   const { sortOrder, sortBy } = parseSortParams(req.query);
   const filter = parseFilterParams(req.query);
   const { _id: userId } = req.user;
+  if (!userId) {
+    return next(new createHttpError(401, 'User not authenticated'));
+  }
   const contacts = await getAllContactsService({
     page,
     perPage,
@@ -37,6 +40,9 @@ export const getContacts = async (req, res, next) => {
 export const getContact = async (req, res, next) => {
   const { id } = req.params;
   const { _id: userId } = req.user;
+  if (!userId) {
+    return next(new createHttpError(401, 'User not authenticated'));
+  }
   const contact = await getContactByIdService(id, userId);
   if (!contact) {
     return next(createError(404, `Contact with id ${id} not found`));
@@ -82,7 +88,11 @@ export const createContact = async (req, res, next) => {
 
 export const deleteContact = async (req, res, next) => {
   const { id } = req.params;
-  const contact = await deleteContactService(id);
+  const { _id: userId } = req.user;
+  if (!userId) {
+    return next(new createHttpError(401, 'User not authenticated'));
+  }
+  const contact = await deleteContactService(id, userId);
   if (!contact) {
     return next(createError(404, `Contact with id=${id} not found`));
   }
@@ -95,8 +105,12 @@ export const updateContact = async (req, res, next) => {
   }
   const { id } = req.params;
   const { name, phoneNumber, email, isFavourite, contactType } = req.body;
+  const { _id: userId } = req.user;
+  if (!userId) {
+    return next(new createHttpError(401, 'User not authenticated'));
+  }
 
-  const updatedContact = await updateContactService(id, {
+  const updatedContact = await updateContactService(id, userId, {
     name,
     phoneNumber,
     email,
