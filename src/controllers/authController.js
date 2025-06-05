@@ -1,4 +1,5 @@
 import { THIRTY_DAYS } from '../constants/index.js';
+import createHttpError from 'http-errors';
 import {
   registerUser,
   loginUser,
@@ -68,9 +69,12 @@ export const refreshUserSessionController = async (req, res) => {
 };
 
 export const logoutUserController = async (req, res) => {
-  if (req.cookies.sessionId) {
-    await logoutUser(req.cookies.sessionId);
+  const sessionId = req.cookies.sessionId;
+  if (!sessionId) {
+    throw createHttpError(404, 'Session ID is not found');
   }
+
+  await logoutUser(sessionId);
   res.clearCookie('sessionId');
   res.clearCookie('refreshToken');
 
