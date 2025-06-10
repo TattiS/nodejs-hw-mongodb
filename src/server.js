@@ -6,6 +6,7 @@ import { getEnvValue } from './utils/getEnvValue.js';
 import router from './routes/index.js';
 import { notFoundHandler } from './middlewares/notFoundHandler.js';
 import { errorHandler } from './middlewares/errorHandler.js';
+import { UPLOAD_DIR } from './constants/index.js';
 
 const PORT = parseInt(getEnvValue('PORT', 3000));
 
@@ -24,10 +25,10 @@ export const startServer = () => {
 
   //app.use('/contacts', router);
   app.use(router);
-  app.get('/', (req, res) => {
-    res.json('Hello from the server!');
-  });
-
+  // app.get('/', (req, res) => {
+  //   res.json('Hello from the server!');
+  // });
+  app.use('/uploads', express.static(UPLOAD_DIR));
   app.use(notFoundHandler);
   app.use(errorHandler);
   app.listen(PORT, () => {

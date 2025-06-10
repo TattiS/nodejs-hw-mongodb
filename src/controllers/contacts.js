@@ -10,6 +10,7 @@ import { parsePaginationParams } from '../utils/parsePaginationParams.js';
 import { parseSortParams } from '../utils/parseSortParams.js';
 import { parseFilterParams } from '../utils/parseFilterParams.js';
 import createHttpError from 'http-errors';
+import { saveFileToUploadDir } from '../utils/saveFileToUploadDir.js';
 
 export const getContacts = async (req, res, next) => {
   const { page, perPage } = parsePaginationParams(req.query);
@@ -104,10 +105,16 @@ export const updateContact = async (req, res, next) => {
     return next(createError(400, 'Request body is empty!'));
   }
   const { id } = req.params;
+  const photo = req.file;
+  let photoUrl;
+
   const { name, phoneNumber, email, isFavourite, contactType } = req.body;
   const { _id: userId } = req.user;
   if (!userId) {
     return next(new createHttpError(401, 'User not authenticated'));
+  }
+  if (photo) {
+    photoUrl = await saveFileToUploadDir(photo);
   }
 
   const updatedContact = await updateContactService(id, userId, {
@@ -116,6 +123,7 @@ export const updateContact = async (req, res, next) => {
     email,
     isFavourite,
     contactType,
+    photo: photoUrl,
   });
 
   if (!updatedContact) {
