@@ -127,7 +127,7 @@ export const resetPassword = async (password, token) => {
     const decoded = jwt.verify(token, getEnvValue('JWT_SECRET'));
     const user = await UserCollection.findById(decoded.sub);
     if (!user) {
-      throw new createHttpError.NotFound('User not found');
+      throw new createHttpError.NotFound('User not found!');
     }
     const hashedPassword = await bcrypt.hash(password, 10);
     await UserCollection.findByIdAndUpdate(user._id, {
@@ -138,7 +138,7 @@ export const resetPassword = async (password, token) => {
       throw new createHttpError.Unauthorized('Token is unauthorized');
     }
     if (error.name === 'TokenExpiredError') {
-      throw new createHttpError.Unauthorized('Token is expired');
+      throw new createHttpError.Unauthorized('Token is expired or invalid');
     }
     throw new createHttpError(500, error.message);
   }

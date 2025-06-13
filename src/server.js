@@ -25,9 +25,7 @@ export const startServer = () => {
 
   //app.use('/contacts', router);
   app.use(router);
-  // app.get('/', (req, res) => {
-  //   res.json('Hello from the server!');
-  // });
+
   app.use('/uploads', express.static(UPLOAD_DIR));
   app.use(notFoundHandler);
   app.use(errorHandler);

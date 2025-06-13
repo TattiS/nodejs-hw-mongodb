@@ -11,6 +11,8 @@ import { parseSortParams } from '../utils/parseSortParams.js';
 import { parseFilterParams } from '../utils/parseFilterParams.js';
 import createHttpError from 'http-errors';
 import { saveFileToUploadDir } from '../utils/saveFileToUploadDir.js';
+import { saveFileToCloudinary } from '../utils/saveFileToCloudinary.js';
+import { getEnvValue } from '../utils/getEnvValue.js';
 
 export const getContacts = async (req, res, next) => {
   const { page, perPage } = parsePaginationParams(req.query);
@@ -69,6 +71,17 @@ export const createContact = async (req, res, next) => {
       ),
     );
   }
+  const photo = req.file;
+  let photoUrl;
+
+  if (photo) {
+    if (getEnvValue('ENABLE_CLOUDINARY') === 'true') {
+      photoUrl = await saveFileToCloudinary(photo);
+    } else {
+      photoUrl = await saveFileToUploadDir(photo);
+    }
+  }
+
   const newContact = await createContactService({
     name,
     phoneNumber,
@@ -76,6 +89,7 @@ export const createContact = async (req, res, next) => {
     isFavourite,
     contactType,
     userId,
+    photo: photoUrl,
   });
   if (!newContact) {
     return next(createError(404, 'Contact not created'));
@@ -106,15 +120,19 @@ export const updateContact = async (req, res, next) => {
   }
   const { id } = req.params;
   const photo = req.file;
-  let photoUrl;
-
   const { name, phoneNumber, email, isFavourite, contactType } = req.body;
   const { _id: userId } = req.user;
   if (!userId) {
     return next(new createHttpError(401, 'User not authenticated'));
   }
+
+  let photoUrl;
   if (photo) {
-    photoUrl = await saveFileToUploadDir(photo);
+    if (getEnvValue('ENABLE_CLOUDINARY') === 'true') {
+      photoUrl = await saveFileToCloudinary(photo);
+    } else {
+      photoUrl = await saveFileToUploadDir(photo);
+    }
   }
 
   const updatedContact = await updateContactService(id, userId, {
