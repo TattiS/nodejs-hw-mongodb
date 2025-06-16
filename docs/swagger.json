@@ -7,14 +7,14 @@
       "name": "Apache 2.0",
       "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
     },
-    "description": "<опис вашого додатку>"
+    "description": "A RESTful API for managing personal contacts. Supports user registration, authentication, and password reset via email.\n"
   },
   "servers": [
     {
       "url": "http://127.0.0.1:3000"
     },
     {
-      "url": "http://127.0.0.1:3000"
+      "url": "https://nodejs-hw-mongodb-5-eqak.onrender.com"
     }
   ],
   "tags": [
