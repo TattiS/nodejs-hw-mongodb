@@ -1,0 +1,29 @@
+tags:
+  - Auth
+summary: Register a new user
+operationId: registerUser
+description: Creates a new user account
+security: []
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        type: object
+        required:
+          - email
+          - password
+          - name
+        properties:
+          name:
+            type: string
+          email:
+            type: string
+            format: email
+          password:
+            type: string
+responses:
+  '201':
+    description: Successfully registered a user
+  '409':
+    description: Email is already in use

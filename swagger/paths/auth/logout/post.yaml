@@ -1,0 +1,11 @@
+tags:
+  - Auth
+summary: Logout user
+operationId: logoutUser
+security: []
+description: Logs the user out by deleting the session and clearing cookies
+responses:
+  '204':
+    description: Successfully logged out
+  '404':
+    description: Session ID not found

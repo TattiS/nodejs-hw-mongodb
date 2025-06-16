@@ -1,0 +1,26 @@
+tags:
+  - Auth
+summary: Login user
+operationId: loginUser
+description: Authenticates a user and creates a new session
+security: []
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        type: object
+        required:
+          - email
+          - password
+        properties:
+          email:
+            type: string
+            format: email
+          password:
+            type: string
+responses:
+  '200':
+    description: Successfully logged in
+  '401':
+    description: Invalid login or password

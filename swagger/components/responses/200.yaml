@@ -1,0 +1,14 @@
+description: Successful response with contact data
+content:
+  application/json:
+    schema:
+      $ref: ../schemas/contact.yaml
+      example:
+        _id: '60d21b4667d0d8992e610c85'
+        name: 'John Doe'
+        phoneNumber: '+380991234567'
+        email: 'john@example.com'
+        isFavourite: true
+        contactType: 'work'
+        userId: '60d21b4667d0d8992e610c99'
+        photo: 'https://example.com/avatar.jpg'

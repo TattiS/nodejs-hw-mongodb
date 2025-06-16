@@ -1,0 +1,35 @@
+type: object
+required:
+  - name
+  - phoneNumber
+  - contactType
+  - userId
+properties:
+  name:
+    type: string
+    example: 'John Doe'
+  phoneNumber:
+    type: string
+    example: '+380991234567'
+  email:
+    type: string
+    format: email
+    example: 'john@example.com'
+  isFavourite:
+    type: boolean
+    default: false
+    example: true
+  contactType:
+    type: string
+    enum:
+      - work
+      - home
+      - personal
+    default: personal
+    example: 'work'
+  userId:
+    type: string
+    example: '60d21b4667d0d8992e610c85'
+  photo:
+    type: string
+    example: 'https://example.com/images/contact1.jpg'
